@@ -28,6 +28,8 @@ public class revised_player_controller : MonoBehaviour
 
     private bool can_dash;
 
+    private float const_decceleration = 0.1f;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -71,7 +73,7 @@ public class revised_player_controller : MonoBehaviour
         // Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && can_dash)
         {
-            current_player_velocity += (dash_speed * move_input);
+            current_player_velocity = ((max_player_velocity + dash_speed) * move_input);
             Debug.Log("Dash is dashing");
         }
     }
@@ -112,6 +114,11 @@ public class revised_player_controller : MonoBehaviour
         }
 
         rb.linearVelocity = new Vector2(current_player_velocity, rb.linearVelocity.y);
+        if (is_grounded == true && Math.Abs(current_player_velocity) > max_player_velocity)
+            {
+                current_player_velocity -= const_decceleration;
+                //Debug.Log("Deceleration IS happening");
+            }
 
     }
     
