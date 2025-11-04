@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XInput;
 
 public class revised_player_controller : MonoBehaviour
 {
@@ -14,6 +17,7 @@ public class revised_player_controller : MonoBehaviour
     [SerializeField] private float jump_force = 12f;
 
     [SerializeField] private float dash_speed = 20f;
+    [SerializeField] private float dash_time = 0.5f;
 
 
     [Header("Ground Check")]
@@ -21,18 +25,24 @@ public class revised_player_controller : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
 
+    private TrailRenderer trail_renderer;
+
     private Rigidbody2D rb;
     private bool is_grounded;
     private float move_input;
     private float current_player_velocity = 1f;
 
-    private bool can_dash;
+    private Vector2 dashing_direction;
+    private bool is_dashing;
+    private bool can_dash = true;
 
-    private float const_decceleration = 0.1f;
+
+
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        trail_renderer = GetComponent<TrailRenderer>();
 
         // Set to Dynamic with gravity
         rb.bodyType = RigidbodyType2D.Dynamic;
@@ -61,7 +71,7 @@ public class revised_player_controller : MonoBehaviour
         is_grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         // update dash
-        can_dash = is_grounded;
+        //can_dash = is_grounded;
 
         // Jump input
         if (Input.GetKeyDown(KeyCode.Space) && is_grounded)
@@ -71,11 +81,40 @@ public class revised_player_controller : MonoBehaviour
         }
 
         // Dash
-        if (Input.GetKeyDown(KeyCode.LeftShift) && can_dash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && can_dash /*&& is_grounded == false*/)
         {
-            current_player_velocity = ((max_player_velocity + dash_speed) * move_input);
-            Debug.Log("Dash is dashing");
+            is_dashing = true;
+            can_dash = false;
+            trail_renderer.emitting = true;
+            dashing_direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            
+            //Debug.Log(dashing_direction);
+
+            StartCoroutine(stop_dashing());
+
+
+
         }
+        
+
+        if (is_dashing)
+        {
+            rb.linearVelocity = dashing_direction.normalized * dash_speed;
+            return;
+        }
+        if (is_grounded)
+        {
+            can_dash = true;
+        }
+    }
+    
+    //stop dashing
+    private IEnumerator stop_dashing()
+    {
+        yield return new WaitForSeconds(dash_time);
+        trail_renderer.emitting = false;
+        is_dashing = false;
+        
     }
 
     /*movement function*/
@@ -89,6 +128,7 @@ public class revised_player_controller : MonoBehaviour
             {
                 current_player_velocity += acceleration;
                 //Debug.Log("Acceleration IS happening TO THE RIGHT");
+
             }
         }
         else if (Input.GetKey(KeyCode.A))
@@ -100,6 +140,7 @@ public class revised_player_controller : MonoBehaviour
             {
                 current_player_velocity += acceleration * -1;
                 //Debug.Log("Acceleration IS happening TO THE LEFT");
+
             }
 
         }
@@ -112,13 +153,16 @@ public class revised_player_controller : MonoBehaviour
             }
 
         }
+        
+        if (is_dashing == false)
+        {
+            rb.linearVelocity = new Vector2(current_player_velocity, rb.linearVelocity.y);
+        }
 
-        rb.linearVelocity = new Vector2(current_player_velocity, rb.linearVelocity.y);
-        if (is_grounded == true && Math.Abs(current_player_velocity) > max_player_velocity)
-            {
-                current_player_velocity -= const_decceleration;
-                //Debug.Log("Deceleration IS happening");
-            }
+
+        
+            
+
 
     }
     
