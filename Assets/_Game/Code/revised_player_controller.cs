@@ -35,6 +35,7 @@ public class revised_player_controller : MonoBehaviour
     private Vector2 dashing_direction;
     private bool is_dashing;
     private bool can_dash = true;
+    private float default_direction = 1.00f;
 
 
 
@@ -86,11 +87,21 @@ public class revised_player_controller : MonoBehaviour
             is_dashing = true;
             can_dash = false;
             trail_renderer.emitting = true;
-            dashing_direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (Input.GetAxisRaw("Horizontal") == 0.00f && Input.GetAxisRaw("Vertical") == 0.00f)
+            {
+                dashing_direction = new Vector2(default_direction, Input.GetAxisRaw("Vertical"));
+            }
+            else
+            {
+                dashing_direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            }
+
+            //dashing_direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
             
-            //Debug.Log(dashing_direction);
+            Debug.Log(dashing_direction);
 
             StartCoroutine(stop_dashing());
+
 
 
 
@@ -127,6 +138,7 @@ public class revised_player_controller : MonoBehaviour
             if (current_player_velocity < max_player_velocity)
             {
                 current_player_velocity += acceleration;
+                default_direction = 1.00f;
                 //Debug.Log("Acceleration IS happening TO THE RIGHT");
 
             }
@@ -139,6 +151,7 @@ public class revised_player_controller : MonoBehaviour
             if (current_player_velocity > -max_player_velocity)
             {
                 current_player_velocity += acceleration * -1;
+                default_direction = -1.00f;
                 //Debug.Log("Acceleration IS happening TO THE LEFT");
 
             }

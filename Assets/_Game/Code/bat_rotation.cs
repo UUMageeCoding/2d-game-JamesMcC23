@@ -7,6 +7,8 @@ using UnityEngine.Rendering;
 public class bat_rotation : MonoBehaviour
 {
     [SerializeField] private Camera main_camera;
+    [SerializeField] float angle;
+
     private UnityEngine.Vector2 mouse_position;
 
     // Update is called once per frame

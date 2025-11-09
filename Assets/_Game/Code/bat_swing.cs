@@ -2,6 +2,7 @@ using System.Collections;
 using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class bat_swing : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class bat_swing : MonoBehaviour
     private RaycastHit2D[] hits;
 
     [SerializeField] private float attack_cooldown = 0.5f;
+    [SerializeField] private Object bat_pivot;
     private float attack_timer;
 
     private void Start()
@@ -34,24 +36,29 @@ public class bat_swing : MonoBehaviour
         attack_timer += Time.deltaTime;
     }
 
-  
+
 
     private void attack()
     {
         hits = Physics2D.CircleCastAll(attack_transform.position, attack_range, transform.right, 0f, attackable);
 
-        for(int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < hits.Length; i++)
         {
             attackable_object attackable_Object = hits[i].collider.gameObject.GetComponent<attackable_object>();
 
             if (attackable_Object != null)
             {
-                //apply knockback
+                //player knockback code go here :)
+                Debug.Log(bat_pivot);
+
+
                 Debug.Log("Hit has been hitted");
             }
         }
-        
+
     }
+
+
 
     private void OnDrawGizmosSelected()
     {
