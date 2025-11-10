@@ -40426,14 +40426,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092511864}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0.018968685, y: -0.007857086, z: -0.38260278, w: 0.92368484}
   m_LocalPosition: {x: 1.5, y: 0, z: 0}
   m_LocalScale: {x: 0.10000001, y: 0.10000001, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1804107325}
   m_Father: {fileID: 880614520}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
+  m_LocalEulerAnglesHint: {x: 1.664, y: -1.664, z: -45.024}
 --- !u!212 &2092511866
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -40499,7 +40499,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 2092511864}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
