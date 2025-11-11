@@ -3,6 +3,7 @@ using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Events;
 
 public class bat_swing : MonoBehaviour
 {
@@ -15,9 +16,15 @@ public class bat_swing : MonoBehaviour
     [SerializeField] private Object bat_pivot;
     private float attack_timer;
 
+    [SerializeField] private Rigidbody2D knockback_target;
+    [SerializeField] private GameObject attack_hitbox;
+    [SerializeField] private float strength = 16;
+
+
     private void Start()
     {
         attack_timer = attack_cooldown;
+
     }
 
 
@@ -41,6 +48,7 @@ public class bat_swing : MonoBehaviour
     private void attack()
     {
         hits = Physics2D.CircleCastAll(attack_transform.position, attack_range, transform.right, 0f, attackable);
+        
 
         for (int i = 0; i < hits.Length; i++)
         {
@@ -49,8 +57,9 @@ public class bat_swing : MonoBehaviour
             if (attackable_Object != null)
             {
                 //player knockback code go here :)
-                Debug.Log(bat_pivot);
-
+                UnityEngine.Vector2 direction = (transform.position - attack_hitbox.transform.position).normalized;
+                knockback_target.AddForce(direction * strength, ForceMode2D.Impulse);
+                Debug.Log(direction);
 
                 Debug.Log("Hit has been hitted");
             }
