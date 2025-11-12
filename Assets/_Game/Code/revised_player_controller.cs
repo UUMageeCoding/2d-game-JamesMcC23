@@ -42,6 +42,8 @@ public class revised_player_controller : MonoBehaviour
     [SerializeField] private GameObject attack_hitbox;
     [SerializeField] private float strength = 16;
 
+    [SerializeField] private float attack_range_x, attack_range_y;
+    [SerializeField] private float hit_divider = 2;
     private TrailRenderer trail_renderer;
 
     private Rigidbody2D rb;
@@ -78,7 +80,7 @@ public class revised_player_controller : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
-        Gizmos.DrawWireSphere(attack_transform.position, attack_range);
+        Gizmos.DrawWireCube(attack_transform.position,new UnityEngine.Vector2(attack_range_x,attack_range_y) );
     }
 
     /* misc functions */
@@ -143,19 +145,12 @@ public class revised_player_controller : MonoBehaviour
         if (Input.GetMouseButton(0) && attack_timer >= attack_cooldown)
         {
             attack_timer = 0f;
-            //attack();
+            attack();
 
-            UnityEngine.Vector2 hit_direction = (transform.position - attack_hitbox.transform.position).normalized;
-            rb.linearVelocity = hit_direction * (((Math.Abs(rb.linearVelocityX) + Math.Abs(rb.linearVelocityY)) / 2) + strength);
-
-            Debug.Log("linear Velocity is " + rb.linearVelocity);
-            Debug.Log("Hit direction is " + hit_direction);
+            //Debug.Log("Hit direction is " + hit_direction);
 
         }
-        else
-        {
-            hit_force = new UnityEngine.Vector2(0,0);
-        }
+        
 
         attack_timer += Time.deltaTime;
 
@@ -226,7 +221,7 @@ public class revised_player_controller : MonoBehaviour
         if (is_dashing == false)
         {
             
-           rb.linearVelocityX = current_player_velocity.x;
+            rb.linearVelocityX = current_player_velocity.x;
         }
 
 
@@ -237,7 +232,7 @@ public class revised_player_controller : MonoBehaviour
     }
     private void attack()
     {
-        hits = Physics2D.CircleCastAll(attack_transform.position, attack_range, transform.right, 0f, attackable);
+        hits = Physics2D.BoxCastAll(attack_transform.position, new UnityEngine.Vector2(attack_range_x,attack_range_y), 0f, transform.forward, attackable);
 
 
         for (int i = 0; i < hits.Length; i++)
@@ -251,14 +246,22 @@ public class revised_player_controller : MonoBehaviour
 
                 UnityEngine.Vector2 hit_direction = (transform.position - attack_hitbox.transform.position).normalized;
                 //knockback_target.AddForce(hit_direction * strength, ForceMode2D.Impulse);
-                rb.linearVelocity = hit_direction * (((Math.Abs(rb.linearVelocityX) + Math.Abs(rb.linearVelocityY))/2) + strength);
-                Debug.Log(rb.linearVelocity);
+                hit_force = hit_direction * (((Math.Abs(rb.linearVelocityX) + Math.Abs(rb.linearVelocityY)) / hit_divider) + strength);
+               
+                rb.linearVelocityY = hit_force.y;
+                current_player_velocity.x += hit_force.x;
+                can_dash = true;
+                
+
+
 
                 Debug.Log("Hit has been hitted");
             }
         }
 
     }
+    
+    
 
 
     
