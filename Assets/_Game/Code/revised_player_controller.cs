@@ -119,7 +119,7 @@ public class revised_player_controller : MonoBehaviour
             }
 
 
-            Debug.Log(dashing_direction);
+           // Debug.Log(dashing_direction);
 
             StartCoroutine(stop_dashing());
             
@@ -255,7 +255,7 @@ public class revised_player_controller : MonoBehaviour
 
 
 
-                Debug.Log("Hit has been hitted");
+                //Debug.Log("Hit has been hitted");
             }
         }
 
