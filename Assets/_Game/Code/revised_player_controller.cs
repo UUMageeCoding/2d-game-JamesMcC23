@@ -10,53 +10,66 @@ using UnityEngine.InputSystem.XInput;
 
 public class revised_player_controller : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float max_player_velocity = 15f;
-    [SerializeField] private float acceleration = 1f;
+    #region "Variables"
 
-    [SerializeField] private float decceleration = 1f;
+        #region "Movement and ground check"
 
-    [SerializeField] private float jump_force = 12f;
+            [Header("Movement Settings")]
+            [SerializeField] private float max_player_velocity = 15f;
+            [SerializeField] private float acceleration = 1f;
 
-    [SerializeField] private float dash_speed = 20f;
-    [SerializeField] private float dash_time = 0.5f;
+            [SerializeField] private float decceleration = 1f;
 
+            [SerializeField] private float jump_force = 12f;
+            private UnityEngine.Vector2 current_player_velocity = new UnityEngine.Vector2(0,0);
 
-    [Header("Ground Check")]
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.2f;
-    [SerializeField] private LayerMask groundLayer;
+            [Header("Dash")]
 
-    [Header("Bat swing")]
-    [SerializeField] private Transform attack_transform;
-    [SerializeField] private float attack_range = 1.5f;
-    [SerializeField] private LayerMask attackable;
-    private RaycastHit2D[] hits;
-
-    [SerializeField] private float attack_cooldown = 0.5f;
-    [SerializeField] private UnityEngine.Object bat_pivot;
-    private float attack_timer;
-    private UnityEngine.Vector2 hit_force;
-
-    [SerializeField] private Rigidbody2D knockback_target;
-    [SerializeField] private GameObject attack_hitbox;
-    [SerializeField] private float strength = 16;
-
-    [SerializeField] private float attack_range_x, attack_range_y;
-    [SerializeField] private float hit_divider = 2;
-    private TrailRenderer trail_renderer;
-
-    private Rigidbody2D rb;
-    private bool is_grounded;
-    private float move_input;
-    private UnityEngine.Vector2 current_player_velocity = new UnityEngine.Vector2(0,0);
-
-    private Vector2 dashing_direction;
-    private bool is_dashing;
-    private bool can_dash = true;
-    private float default_direction = 1.00f;
+            [SerializeField] private float dash_speed = 20f;
+            [SerializeField] private float dash_time = 0.5f;
+            private TrailRenderer trail_renderer;
+            private Vector2 dashing_direction;
+            private bool is_dashing;
+            private bool can_dash = true;
+            private float default_direction = 1.00f;
 
 
+            [Header("Ground Check")]
+            [SerializeField] private Transform groundCheck;
+            [SerializeField] private float groundCheckRadius = 0.2f;
+            [SerializeField] private LayerMask groundLayer;
+            private bool is_grounded;
+            
+        #endregion
+
+        #region "Bat swing and knockback"
+
+            [Header("Bat swing")]
+            [SerializeField] private Transform attack_transform;
+            [SerializeField] private LayerMask attackable;
+            private RaycastHit2D[] hits;
+
+            [SerializeField] private float attack_cooldown = 0.5f;
+            [SerializeField] private UnityEngine.Object bat_pivot;
+            private float attack_timer;
+            private UnityEngine.Vector2 hit_force;
+
+            [SerializeField] private Rigidbody2D knockback_target;
+            [SerializeField] private GameObject attack_hitbox;
+            [SerializeField] private float strength = 16;
+
+            [SerializeField] private float attack_range_x, attack_range_y;
+            [SerializeField] private float hit_divider = 2;
+
+        #endregion
+
+        #region "Misc"
+
+            private Rigidbody2D rb;
+
+        #endregion
+    
+    #endregion
 
 
     void Start()
@@ -80,21 +93,16 @@ public class revised_player_controller : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+
         Gizmos.DrawWireCube(attack_transform.position,new UnityEngine.Vector2(attack_range_x,attack_range_y) );
     }
 
-    /* misc functions */
-
     void Update()
     {
-        // Get horizontal input
-        move_input = Input.GetAxisRaw("Horizontal");
 
         // Check if grounded
         is_grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // update dash
-        //can_dash = is_grounded;
 
         // Jump input
         if (Input.GetKeyDown(KeyCode.Space) && is_grounded)
@@ -102,6 +110,8 @@ public class revised_player_controller : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jump_force);
             //Debug.Log("THE SPACE KEY IS BEING PRESSED");
         }
+
+        #region "Dash"
 
         // Dash
         if (Input.GetKeyDown(KeyCode.LeftShift) && can_dash /*&& is_grounded == false*/)
@@ -141,12 +151,13 @@ public class revised_player_controller : MonoBehaviour
             can_dash = true;
         }
 
+        #endregion
+
         //bat code
         if (Input.GetMouseButton(0) && attack_timer >= attack_cooldown)
         {
             attack_timer = 0f;
             attack();
-
             //Debug.Log("Hit direction is " + hit_direction);
 
         }
@@ -223,12 +234,6 @@ public class revised_player_controller : MonoBehaviour
             
             rb.linearVelocityX = current_player_velocity.x;
         }
-
-
-
-
-
-
     }
     private void attack()
     {
@@ -241,30 +246,37 @@ public class revised_player_controller : MonoBehaviour
 
             if (attackable_Object != null)
             {
-                //player knockback code go here :)
-
 
                 UnityEngine.Vector2 hit_direction = (transform.position - attack_hitbox.transform.position).normalized;
-                //knockback_target.AddForce(hit_direction * strength, ForceMode2D.Impulse);
                 hit_force = hit_direction * (((Math.Abs(rb.linearVelocityX) + Math.Abs(rb.linearVelocityY)) / hit_divider) + strength);
                
                 rb.linearVelocityY = hit_force.y;
                 current_player_velocity.x += hit_force.x;
                 can_dash = true;
-                
-
-
 
                 //Debug.Log("Hit has been hitted");
             }
         }
 
     }
-    
-    
+
+    #region "Respawn, death and checkpoints"
+    void OnTriggerEnter(Collider colision_box)
+    {
+        if(colision_box.tag == "checkpoint")
+        {
+            Debug.Log("this IS a checkpoint (i swear...)");
+            
+        }
+        
+    }
+
+    #endregion
 
 
-    
+
+
+
 
 
 }

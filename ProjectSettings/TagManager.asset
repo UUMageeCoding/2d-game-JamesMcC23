@@ -6,6 +6,7 @@ TagManager:
   tags:
   - attackable
   - harmfull
+  - checkpoint
   layers:
   - Default
   - TransparentFX

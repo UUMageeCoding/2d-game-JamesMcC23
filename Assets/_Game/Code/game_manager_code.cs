@@ -1,10 +1,12 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class game_manager_code : MonoBehaviour
 {
 
 
-  // Singleton instance
+  [SerializeField] CinemachineConfiner2D main_cinemachine_camera;
+  Collider2D camera_bound_var;
 
   private static game_manager_code _instance;
 
@@ -45,6 +47,21 @@ public class game_manager_code : MonoBehaviour
     }
 
   } 
+
+public void current_camera_bounds(Collider2D camera_bound)
+    {
+        camera_bound_var = camera_bound;
+        
+    }
+
+
+    void Update()
+    {
+//        main_cinemachine_camera.BoundingShape2D = camera_bound_var;
+    }
+
+    
+
 
 
 }
