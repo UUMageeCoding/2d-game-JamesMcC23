@@ -50,7 +50,7 @@ public class revised_player_controller : MonoBehaviour
             private RaycastHit2D[] hits;
 
             [SerializeField] private float attack_cooldown = 0.5f;
-            [SerializeField] private UnityEngine.Object bat_pivot;
+            [SerializeField] private GameObject bat_pivot;
             private float attack_timer;
             private UnityEngine.Vector2 hit_force;
 
@@ -60,6 +60,13 @@ public class revised_player_controller : MonoBehaviour
 
             [SerializeField] private float attack_range_x, attack_range_y;
             [SerializeField] private float hit_divider = 2;
+            
+
+        #endregion
+
+        #region "checkpoint and respawn"
+        private Transform respawn_point;
+        [SerializeField] private float respawn_time = 0.5f;         //nice
 
         #endregion
 
@@ -110,6 +117,8 @@ public class revised_player_controller : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jump_force);
             //Debug.Log("THE SPACE KEY IS BEING PRESSED");
         }
+
+        
 
         #region "Dash"
 
@@ -237,7 +246,7 @@ public class revised_player_controller : MonoBehaviour
     }
     private void attack()
     {
-        hits = Physics2D.BoxCastAll(attack_transform.position, new UnityEngine.Vector2(attack_range_x,attack_range_y), 0f, transform.forward, attackable);
+        hits = Physics2D.BoxCastAll(attack_transform.position, new UnityEngine.Vector2(attack_range_x,attack_range_y), bat_pivot.transform.rotation.z, transform.forward, attackable);
 
 
         for (int i = 0; i < hits.Length; i++)
@@ -261,16 +270,29 @@ public class revised_player_controller : MonoBehaviour
     }
 
     #region "Respawn, death and checkpoints"
-    void OnTriggerEnter(Collider colision_box)
+    void OnTriggerEnter2D(Collider2D colision_box)
     {
         if(colision_box.tag == "checkpoint")
         {
-            Debug.Log("this IS a checkpoint (i swear...)");
-            
+            respawn_point = this.transform;
+        }
+
+        if(colision_box.tag == "harmfull")
+        {
+            DEATH();
         }
         
     }
 
+    private IEnumerator DEATH()
+    {
+        yield return new WaitForSeconds(respawn_time);
+
+        this.transform.position = respawn_point;
+
+    }
+
+    
     #endregion
 
 
