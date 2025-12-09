@@ -65,8 +65,8 @@ public class revised_player_controller : MonoBehaviour
         #endregion
 
         #region "checkpoint and respawn"
-        private Transform respawn_point;
-        [SerializeField] private float respawn_time = 0.5f;         //nice
+        private UnityEngine.Vector3 respawn_point;
+        [SerializeField] private float respawn_time = 0.1f;         //nice
 
         #endregion
 
@@ -274,12 +274,16 @@ public class revised_player_controller : MonoBehaviour
     {
         if(colision_box.tag == "checkpoint")
         {
-            respawn_point = this.transform;
+            respawn_point = this.transform.position;
+            Debug.Log("this IS a checkpoint...");
+            Debug.Log(respawn_point);
         }
 
         if(colision_box.tag == "harmfull")
         {
-            DEATH();
+            
+            Debug.Log("ouch, stop that...");
+            StartCoroutine(DEATH());
         }
         
     }
@@ -287,8 +291,8 @@ public class revised_player_controller : MonoBehaviour
     private IEnumerator DEATH()
     {
         yield return new WaitForSeconds(respawn_time);
-
-        this.transform.position = respawn_point;
+        transform.position = respawn_point;
+        Debug.Log("times up");
 
     }
 
