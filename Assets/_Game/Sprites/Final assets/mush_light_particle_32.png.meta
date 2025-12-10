@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      mush_light_particle_32_0: 60758393100653425
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
