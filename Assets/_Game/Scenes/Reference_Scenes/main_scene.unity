@@ -448,7 +448,7 @@ GameObject:
   - component: {fileID: 260022762}
   - component: {fileID: 260022761}
   m_Layer: 0
-  m_Name: Player
+  m_Name: the_chosen_Juan
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18779a1d54be77e49b3ec933e64d8144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max_player_velocity: 10
+  max_player_velocity: 15
   acceleration: 2
   decceleration: 0.9
   jump_force: 12
@@ -672,7 +672,7 @@ TrailRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Time: 0.5
-  m_PreviewTimeScale: 0
+  m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -5977,7 +5977,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 120
+  field of view: 100
   orthographic: 0
   orthographic size: 3
   m_Depth: -1
@@ -6084,7 +6084,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 120
+    FieldOfView: 100
     OrthographicSize: 3
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -62738,7 +62738,7 @@ GameObject:
   - component: {fileID: 2092511866}
   - component: {fileID: 2092511868}
   m_Layer: 0
-  m_Name: baseball_bat_0
+  m_Name: two
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
