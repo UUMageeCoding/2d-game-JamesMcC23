@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XInput;
@@ -65,14 +66,16 @@ public class revised_player_controller : MonoBehaviour
         #endregion
 
         #region "checkpoint and respawn"
-        private UnityEngine.Vector3 respawn_point;
-        [SerializeField] private float respawn_time = 0.1f;         //nice
+        private UnityEngine.Vector3 respawn_point;                  //nice
+        [SerializeField] private float respawn_time = 0.1f;         
 
         #endregion
 
         #region "Misc"
 
             private Rigidbody2D rb;
+           private SpriteRenderer sprite;
+           private Animator juan_animator;
 
         #endregion
     
@@ -83,6 +86,9 @@ public class revised_player_controller : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         trail_renderer = GetComponent<TrailRenderer>();
+        respawn_point = this.transform.position;
+        sprite = GetComponent<SpriteRenderer>();
+        juan_animator = GetComponent<Animator>();
 
         // Set to Dynamic with gravity
         rb.bodyType = RigidbodyType2D.Dynamic;
@@ -198,6 +204,8 @@ public class revised_player_controller : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.D))
         {
+            sprite.flipX = false;
+            juan_animator.SetBool("walking", true);
 
             if (current_player_velocity.x < max_player_velocity)
             {
@@ -213,6 +221,8 @@ public class revised_player_controller : MonoBehaviour
         else if (Input.GetKey(KeyCode.A))
         {
             // Apply horizontal movement to the left
+            sprite.flipX = true;
+            juan_animator.SetBool("walking", true);
 
 
             if (current_player_velocity.x > -max_player_velocity)
@@ -228,6 +238,8 @@ public class revised_player_controller : MonoBehaviour
         }
         else
         {
+            juan_animator.SetBool("walking", false);
+
             if (is_grounded == true && Math.Abs(current_player_velocity.x) > 0)
             {
                 current_player_velocity.x *= decceleration;
@@ -235,6 +247,8 @@ public class revised_player_controller : MonoBehaviour
             }
 
         }
+
+       
 
         //cause of my suffering
 
@@ -275,6 +289,7 @@ public class revised_player_controller : MonoBehaviour
         if(colision_box.tag == "checkpoint")
         {
             respawn_point = this.transform.position;
+
             Debug.Log("this IS a checkpoint...");
             Debug.Log(respawn_point);
         }
@@ -282,7 +297,14 @@ public class revised_player_controller : MonoBehaviour
         if(colision_box.tag == "harmfull")
         {
             
-            Debug.Log("ouch, stop that...");
+            
+            StartCoroutine(DEATH());
+        }
+
+        if(colision_box.tag == "bounds")
+        {
+            
+            
             StartCoroutine(DEATH());
         }
         
@@ -292,6 +314,7 @@ public class revised_player_controller : MonoBehaviour
     {
         yield return new WaitForSeconds(respawn_time);
         transform.position = respawn_point;
+        current_player_velocity = new UnityEngine.Vector2(0,0);
         Debug.Log("times up");
 
     }
